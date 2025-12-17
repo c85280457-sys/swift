@@ -58,7 +58,7 @@ export default function DashboardPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await fetch('/api/operations');
+                const res = await fetch('/api/operations', { cache: 'no-store' });
                 const data = await res.json();
                 setPendingOperations(data);
             } catch (error) {
@@ -73,7 +73,7 @@ export default function DashboardPage() {
     // Polling to keep data in sync (simple "real-time" simulation)
     useEffect(() => {
         const interval = setInterval(async () => {
-            const res = await fetch('/api/operations');
+            const res = await fetch('/api/operations', { cache: 'no-store' });
             const data = await res.json();
             setPendingOperations(data);
         }, 5000); // Poll every 5 seconds
