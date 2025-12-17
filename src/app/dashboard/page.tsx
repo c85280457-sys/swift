@@ -124,11 +124,15 @@ export default function DashboardPage() {
                     <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={() => {
+                            setSwiftCode("BCOEESMM//WFBIUS6SXXX//10,000,00//MT199//MT103//");
+                            setAmount("10,000,00");
+                            setIsModalOpen(true);
+                        }}
                         className="group relative w-full xl:w-auto flex justify-center items-center space-x-2 bg-[#00FF00] text-black px-6 py-2.5 rounded-xl font-black hover:bg-white hover:shadow-[0_0_20px_rgba(0,255,0,0.6)] transition-all duration-300 uppercase tracking-wider text-sm"
                     >
-                        <Plus className="h-4 w-4" />
-                        <span>Nueva Operación</span>
+                        <CheckCircle2 className="h-4 w-4" />
+                        <span>Concluir Pago</span>
                         <div className="absolute inset-0 rounded-xl ring-1 ring-white/50 group-hover:ring-offset-1 transition-all duration-300" />
                     </motion.button>
                 </div>
@@ -255,7 +259,7 @@ export default function DashboardPage() {
                                     <div className="relative">
                                         <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#00FF00]" />
                                         <input
-                                            type="number"
+                                            type="text"
                                             value={amount}
                                             onChange={(e) => setAmount(e.target.value)}
                                             placeholder="0.00"
