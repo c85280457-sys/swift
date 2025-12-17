@@ -50,29 +50,58 @@ export default function DashboardPage() {
 
 
 
-    const defaultPendingOperations = [
-        { id: 1, swift: "BCOEESMM//WFBIUS6SXXX//10,000,00//MT199//MT103//", amount: "10,000,00 $", date: "2024-12-17", status: "Pendiente" },
-    ];
+    const [pendingOperations, setPendingOperations] = useState<Operation[]>([]);
+    const [isLoadingData, setIsLoadingData] = useState(true);
 
-    const [pendingOperations, setPendingOperations] = useState(defaultPendingOperations);
-
+    // Fetch data from server
     useEffect(() => {
-        const stored = localStorage.getItem("swift_pending_ops");
-        if (stored) {
-            setPendingOperations(JSON.parse(stored));
-        }
+        const fetchData = async () => {
+            try {
+                const res = await fetch('/api/operations');
+                const data = await res.json();
+                setPendingOperations(data);
+            } catch (error) {
+                console.error("Failed to fetch operations", error);
+            } finally {
+                setIsLoadingData(false);
+            }
+        };
+        fetchData();
     }, []);
 
+    // Polling to keep data in sync (simple "real-time" simulation)
     useEffect(() => {
-        localStorage.setItem("swift_pending_ops", JSON.stringify(pendingOperations));
-    }, [pendingOperations]);
+        const interval = setInterval(async () => {
+            const res = await fetch('/api/operations');
+            const data = await res.json();
+            setPendingOperations(data);
+        }, 5000); // Poll every 5 seconds
+        return () => clearInterval(interval);
+    }, []);
 
     const [paymentStatus, setPaymentStatus] = useState<'idle' | 'verifying' | 'success'>('idle');
 
-    const handleRestore = (id: number) => {
+    const updateOperationStatus = async (id: number, status: string) => {
+        // Optimistic update
         setPendingOperations(prev => prev.map(op =>
-            op.id === id ? { ...op, status: "Pendiente" } : op
+            op.id === id ? { ...op, status } : op
         ));
+
+        // Server update
+        try {
+            await fetch('/api/operations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, status }),
+            });
+        } catch (error) {
+            console.error("Failed to update status", error);
+            // Revert on error could be implemented here
+        }
+    };
+
+    const handleRestore = (id: number) => {
+        updateOperationStatus(id, "Pending");
     };
 
     const handleVerifyPayment = () => {
@@ -80,8 +109,9 @@ export default function DashboardPage() {
         // Simulate network request
         setTimeout(() => {
             setPaymentStatus('success');
-            // Update the pending operation status
-            setPendingOperations(prev => prev.map(op => ({ ...op, status: "En Proceso de Emisión" })));
+            // Update the pending operation status to "Issuance in Progress"
+            const opId = 1; // Assuming we are updating the first operation for now as per this specific flow
+            updateOperationStatus(opId, "Issuance in Progress");
         }, 2000);
     };
 
@@ -99,7 +129,7 @@ export default function DashboardPage() {
     }
 
     const completedOperations: Operation[] = [
-        { id: 2, swift: "BCOEESMM//WFBIUS6SXXX//10,000,00//MT199//MT103//", amount: "10,000,00 $", date: "2024-12-17", status: "Pagado" },
+        { id: 2, swift: "BCOEESMM//WFBIUS6SXXX//10,000,00//MT199//MT103//", amount: "10,000,00 $", date: "2024-12-17", status: "Paid" },
     ];
 
     return (
@@ -169,7 +199,7 @@ export default function DashboardPage() {
                                         transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                                     />
                                 )}
-                                <span className="relative z-10 whitespace-nowrap">{tab === 'pending' ? 'Operaciones Pendientes' : 'Operaciones Concluidas'}</span>
+                                <span className="relative z-10 whitespace-nowrap">{tab === 'pending' ? 'Pending Operations' : 'Completed Operations'}</span>
                             </button>
                         ))}
                     </div>
@@ -189,10 +219,10 @@ export default function DashboardPage() {
                             <table className="w-full text-left min-w-[800px]">
                                 <thead>
                                     <tr className="border-b border-[#00FF00]/10 bg-[#00FF00]/5">
-                                        <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60">Codigo Swift</th>
-                                        <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60">Monto</th>
-                                        <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60 text-right">Estado</th>
-                                        {activeTab === 'pending' && <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60 text-center">Acciones</th>}
+                                        <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60">SWIFT Code</th>
+                                        <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60">Amount</th>
+                                        <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60 text-right">Status</th>
+                                        {activeTab === 'pending' && <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60 text-center">Actions</th>}
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-[#00FF00]/5">
@@ -219,12 +249,12 @@ export default function DashboardPage() {
                                                     : 'bg-[#00FF00]/10 text-[#00FF00] border-[#00FF00]/20 shadow-[0_0_10px_rgba(0,255,0,0.1)]'
                                                     }`}
                                                 >
-                                                    {op.status || (activeTab === 'pending' ? 'Pendiente' : 'Pagado')}
+                                                    {op.status || (activeTab === 'pending' ? 'Pending' : 'Paid')}
                                                 </span>
                                             </td>
                                             {activeTab === 'pending' && (
                                                 <td className="px-6 py-5 text-center">
-                                                    {op.status !== "En Proceso de Emisión" && (
+                                                    {op.status !== "Issuance in Progress" && (
                                                         <motion.button
                                                             whileHover={{ scale: 1.05 }}
                                                             whileTap={{ scale: 0.95 }}
@@ -237,10 +267,10 @@ export default function DashboardPage() {
                                                             className="inline-flex items-center space-x-2 bg-[#00FF00]/10 hover:bg-[#00FF00] text-[#00FF00] hover:text-black border border-[#00FF00]/50 px-4 py-2 rounded-lg font-bold uppercase tracking-wider text-xs transition-all duration-300"
                                                         >
                                                             <CheckCircle2 className="h-3 w-3" />
-                                                            <span>Concluir</span>
+                                                            <span>Finalize</span>
                                                         </motion.button>
                                                     )}
-                                                    {op.status === "En Proceso de Emisión" && currentUser === "admin" && (
+                                                    {op.status === "Issuance in Progress" && currentUser === "admin" && (
                                                         <motion.button
                                                             whileHover={{ scale: 1.05 }}
                                                             whileTap={{ scale: 0.95 }}
@@ -248,7 +278,7 @@ export default function DashboardPage() {
                                                             className="inline-flex items-center space-x-2 bg-yellow-400/10 hover:bg-yellow-400 text-yellow-400 hover:text-black border border-yellow-400/50 px-4 py-2 rounded-lg font-bold uppercase tracking-wider text-xs transition-all duration-300"
                                                         >
                                                             <RotateCcw className="h-3 w-3" />
-                                                            <span>Restaurar</span>
+                                                            <span>Restore</span>
                                                         </motion.button>
                                                     )}
                                                 </td>
@@ -430,7 +460,7 @@ export default function DashboardPage() {
                                     <div className="w-full bg-[#00FF00]/10 border border-[#00FF00]/20 rounded-xl p-4 mt-6">
                                         <div className="flex justify-between items-center text-sm">
                                             <span className="text-[#00FF00]/60">Status updated to:</span>
-                                            <span className="text-[#00FF00] font-bold uppercase tracking-wider">En Proceso de Emisión</span>
+                                            <span className="text-[#00FF00] font-bold uppercase tracking-wider">Issuance in Progress</span>
                                         </div>
                                     </div>
                                     <button
