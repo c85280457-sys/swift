@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     images: ["/twitter-image.png"],
   },
   icons: {
-    icon: "/icon.png",
+    icon: "/swiftgreen.ico",
   },
 };
 
