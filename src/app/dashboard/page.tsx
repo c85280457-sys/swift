@@ -369,8 +369,8 @@ export default function DashboardPage() {
                                         <Loader2 className="h-16 w-16 text-[#00FF00] animate-spin relative z-10" />
                                     </div>
                                     <div className="space-y-2 text-center">
-                                        <h3 className="text-xl font-bold text-white tracking-wider">VERIFYING BLOCKCHAIN</h3>
-                                        <p className="text-[#00FF00]/60 text-sm animate-pulse">Confirming transaction details...</p>
+                                        <h3 className="text-xl font-bold text-white tracking-wider">PROCESSING PAYMENT</h3>
+                                        <p className="text-[#00FF00]/60 text-sm animate-pulse">Initiating verification...</p>
                                     </div>
                                 </div>
                             )}
@@ -386,8 +386,8 @@ export default function DashboardPage() {
                                         <CheckCircle2 className="h-20 w-20 text-[#00FF00] relative z-10 drop-shadow-[0_0_15px_rgba(0,255,0,0.5)]" />
                                     </div>
                                     <div className="space-y-2 text-center">
-                                        <h3 className="text-2xl font-black text-white tracking-widest">PAYMENT CONFIRMED</h3>
-                                        <p className="text-[#00FF00] font-bold">Transaction ID: {swiftCode.slice(0, 8)}...Verified</p>
+                                        <h3 className="text-2xl font-black text-white tracking-widest">VERIFICATION IN PROGRESS</h3>
+                                        <p className="text-[#00FF00] font-bold">Transaction ID: {swiftCode.slice(0, 8)}...Processing</p>
                                     </div>
                                     <div className="w-full bg-[#00FF00]/10 border border-[#00FF00]/20 rounded-xl p-4 mt-6">
                                         <div className="flex justify-between items-center text-sm">
