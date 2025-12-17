@@ -1,37 +1,59 @@
-
 import { NextResponse } from 'next/server';
-export const dynamic = 'force-dynamic';
-import fs from 'fs';
-import path from 'path';
+import { supabase } from '@/lib/supabaseClient';
 
-const dataFilePath = path.join(process.cwd(), 'src/data/operations.json');
-
-function readData() {
-    if (!fs.existsSync(dataFilePath)) {
-        return [];
-    }
-    const fileContent = fs.readFileSync(dataFilePath, 'utf8');
-    return JSON.parse(fileContent);
-}
-
-function writeData(data: any) {
-    fs.writeFileSync(dataFilePath, JSON.stringify(data, null, 2));
-}
+export const revalidate = 0;
 
 export async function GET() {
-    const data = readData();
-    return NextResponse.json(data);
+    try {
+        const { data, error } = await supabase
+            .from('swift_operations')
+            .select('*')
+            .order('id', { ascending: true });
+
+        if (error) throw error;
+
+        console.log('[API] Reading data from Supabase:', JSON.stringify(data));
+        return NextResponse.json(data, {
+            headers: {
+                'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0',
+                'Surrogate-Control': 'no-store'
+            }
+        });
+    } catch (error) {
+        console.error('[API] Error fetching data:', error);
+        return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
+    }
 }
 
 export async function POST(request: Request) {
-    const body = await request.json();
-    const { id, status } = body;
+    try {
+        const body = await request.json();
+        const { id, status } = body;
+        console.log(`[API] Received update request for ID: ${id}, Status: ${status}`);
 
-    const data = readData();
-    const updatedData = data.map((op: any) =>
-        op.id === id ? { ...op, status } : op
-    );
+        const { data, error } = await supabase
+            .from('swift_operations')
+            .update({ status })
+            .eq('id', id)
+            .select();
 
-    writeData(updatedData);
-    return NextResponse.json(updatedData);
+        if (error) throw error;
+
+        console.log(`[API] Updated data in Supabase:`, JSON.stringify(data));
+
+        // Return the full list to maintain compatibility with the frontend expectation
+        const { data: allData, error: fetchError } = await supabase
+            .from('swift_operations')
+            .select('*')
+            .order('id', { ascending: true });
+
+        if (fetchError) throw fetchError;
+
+        return NextResponse.json(allData);
+    } catch (error) {
+        console.error(`[API] Error in POST handler:`, error);
+        return NextResponse.json({ error: 'Failed to update data' }, { status: 500 });
+    }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     LogOut,
@@ -71,13 +71,27 @@ export default function DashboardPage() {
     }, []);
 
     // Polling to keep data in sync (simple "real-time" simulation)
+    const pollingInterval = useRef<NodeJS.Timeout | null>(null);
+
+    const startPolling = () => {
+        if (pollingInterval.current) clearInterval(pollingInterval.current);
+        pollingInterval.current = setInterval(async () => {
+            try {
+                const res = await fetch('/api/operations', { cache: 'no-store' });
+                const data = await res.json();
+                setPendingOperations(data);
+            } catch (err) {
+                console.error("Polling error:", err);
+            }
+        }, 5000);
+    };
+
+    // Initial fetch and start polling
     useEffect(() => {
-        const interval = setInterval(async () => {
-            const res = await fetch('/api/operations', { cache: 'no-store' });
-            const data = await res.json();
-            setPendingOperations(data);
-        }, 5000); // Poll every 5 seconds
-        return () => clearInterval(interval);
+        startPolling();
+        return () => {
+            if (pollingInterval.current) clearInterval(pollingInterval.current);
+        };
     }, []);
 
     const [paymentStatus, setPaymentStatus] = useState<'idle' | 'verifying' | 'success'>('idle');
@@ -88,16 +102,25 @@ export default function DashboardPage() {
             op.id === id ? { ...op, status } : op
         ));
 
+        // Restart polling to avoid race conditions (overwriting optimistic update with stale data)
+        startPolling();
+
         // Server update
         try {
-            await fetch('/api/operations', {
+            const res = await fetch('/api/operations', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id, status }),
+                cache: 'no-store'
             });
+
+            if (res.ok) {
+                const updatedData = await res.json();
+                setPendingOperations(updatedData);
+            }
         } catch (error) {
             console.error("Failed to update status", error);
-            // Revert on error could be implemented here
+            // Revert is complex with polling, but polling will eventually correct it
         }
     };
 
