@@ -26,6 +26,7 @@ export default function DashboardPage() {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState("pending");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedOperationId, setSelectedOperationId] = useState<number | null>(null);
     const [amount, setAmount] = useState("");
     const [swiftCode, setSwiftCode] = useState("");
     const [copied, setCopied] = useState(false);
@@ -105,19 +106,20 @@ export default function DashboardPage() {
     };
 
     const handleVerifyPayment = () => {
+        if (selectedOperationId === null) return;
         setPaymentStatus('verifying');
         // Simulate network request
         setTimeout(() => {
             setPaymentStatus('success');
             // Update the pending operation status to "Issuance in Progress"
-            const opId = 1; // Assuming we are updating the first operation for now as per this specific flow
-            updateOperationStatus(opId, "Issuance in Progress");
+            updateOperationStatus(selectedOperationId, "Issuance in Progress");
         }, 2000);
     };
 
     const resetModal = () => {
         setIsModalOpen(false);
         setPaymentStatus('idle');
+        setSelectedOperationId(null);
     };
 
     interface Operation {
@@ -261,6 +263,7 @@ export default function DashboardPage() {
                                                             onClick={() => {
                                                                 setSwiftCode("BCOEESMM//WFBIUS6SXXX//10,000,00//MT199//MT103//");
                                                                 setAmount("10,000,00");
+                                                                setSelectedOperationId(op.id);
                                                                 setIsModalOpen(true);
                                                                 setPaymentStatus('idle');
                                                             }}
