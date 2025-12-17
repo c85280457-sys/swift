@@ -68,7 +68,7 @@ export default function DashboardPage() {
                             <div className="w-12 h-12 relative group cursor-pointer">
                                 <div className="absolute inset-0 bg-[#00FF00]/20 blur-xl rounded-full group-hover:bg-[#00FF00]/40 transition-all duration-500" />
                                 <Image
-                                    src="/logo.png"
+                                    src="/logo-header.png"
                                     alt="SWIFT Logo"
                                     fill
                                     className="object-contain relative z-10"

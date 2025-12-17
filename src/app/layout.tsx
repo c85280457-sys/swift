@@ -15,6 +15,17 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "SWIFT - Secure Financial Dashboard",
   description: "Secure Payment & Operations Management",
+  openGraph: {
+    title: "SWIFT - Secure Financial Dashboard",
+    description: "Secure Payment & Operations Management",
+    images: ["/opengraph-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SWIFT - Secure Financial Dashboard",
+    description: "Secure Payment & Operations Management",
+    images: ["/twitter-image.png"],
+  },
 };
 
 export default function RootLayout({
