@@ -26,6 +26,9 @@ export const metadata: Metadata = {
     description: "Secure Payment & Operations Management",
     images: ["/twitter-image.png"],
   },
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 export default function RootLayout({

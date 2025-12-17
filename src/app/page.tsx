@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { User, Lock, ArrowRight, Loader2, ShieldCheck, Globe, Terminal, Server, Wifi, Key } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import CyberGlobe from "@/components/CyberGlobe";
+import RotatingEarth from "@/components/ui/wireframe-dotted-globe";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
@@ -171,8 +171,8 @@ export default function LoginPage() {
           >
             {/* 3D Globe Background Layer */}
             <div className="absolute inset-0 flex items-center justify-center z-0">
-              <div className="w-[800px] h-[800px] opacity-60">
-                <CyberGlobe />
+              <div className="w-[1000px] h-[1000px] opacity-80 flex items-center justify-center">
+                <RotatingEarth width={1000} height={1000} />
               </div>
             </div>
 
