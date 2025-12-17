@@ -13,17 +13,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SWIFT - Secure Financial Dashboard",
-  description: "Secure Payment & Operations Management",
+  title: "SWIFT TERMINAL - AUTHORIZED ACCESS ONLY",
+  description: "SYSTEM SECURE // ENCRYPTED CONNECTION ESTABLISHED. UNAUTHORIZED ACCESS ATTEMPTS WILL BE LOGGED AND TRACED.",
   openGraph: {
-    title: "SWIFT - Secure Financial Dashboard",
-    description: "Secure Payment & Operations Management",
+    title: "SWIFT TERMINAL - AUTHORIZED ACCESS ONLY",
+    description: "SYSTEM SECURE // ENCRYPTED CONNECTION ESTABLISHED. UNAUTHORIZED ACCESS ATTEMPTS WILL BE LOGGED AND TRACED.",
     images: ["/opengraph-image.png"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "SWIFT - Secure Financial Dashboard",
-    description: "Secure Payment & Operations Management",
+    title: "SWIFT TERMINAL - AUTHORIZED ACCESS ONLY",
+    description: "SYSTEM SECURE // ENCRYPTED CONNECTION ESTABLISHED. UNAUTHORIZED ACCESS ATTEMPTS WILL BE LOGGED AND TRACED.",
     images: ["/twitter-image.png"],
   },
   icons: {
