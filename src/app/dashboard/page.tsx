@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     LogOut,
@@ -16,7 +16,8 @@ import {
     Copy,
     Wallet,
     Loader2,
-    ShieldCheck
+    ShieldCheck,
+    RotateCcw
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -28,6 +29,12 @@ export default function DashboardPage() {
     const [amount, setAmount] = useState("");
     const [swiftCode, setSwiftCode] = useState("");
     const [copied, setCopied] = useState(false);
+    const [currentUser, setCurrentUser] = useState("alemanrockefeller7");
+
+    useEffect(() => {
+        const user = localStorage.getItem("swift_user");
+        if (user) setCurrentUser(user);
+    }, []);
 
     const handleLogout = () => {
         router.push("/");
@@ -43,10 +50,30 @@ export default function DashboardPage() {
 
 
 
-    const [pendingOperations, setPendingOperations] = useState([
+    const defaultPendingOperations = [
         { id: 1, swift: "BCOEESMM//WFBIUS6SXXX//10,000,00//MT199//MT103//", amount: "10,000,00 $", date: "2024-12-17", status: "Pendiente" },
-    ]);
+    ];
+
+    const [pendingOperations, setPendingOperations] = useState(defaultPendingOperations);
+
+    useEffect(() => {
+        const stored = localStorage.getItem("swift_pending_ops");
+        if (stored) {
+            setPendingOperations(JSON.parse(stored));
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem("swift_pending_ops", JSON.stringify(pendingOperations));
+    }, [pendingOperations]);
+
     const [paymentStatus, setPaymentStatus] = useState<'idle' | 'verifying' | 'success'>('idle');
+
+    const handleRestore = (id: number) => {
+        setPendingOperations(prev => prev.map(op =>
+            op.id === id ? { ...op, status: "Pendiente" } : op
+        ));
+    };
 
     const handleVerifyPayment = () => {
         setPaymentStatus('verifying');
@@ -104,7 +131,7 @@ export default function DashboardPage() {
                         </div>
                         <div className="flex items-center gap-8">
                             <div className="hidden md:flex flex-col items-end">
-                                <span className="text-sm font-bold text-[#00FF00] tracking-wide">alemanrockefeller7</span>
+                                <span className="text-sm font-bold text-[#00FF00] tracking-wide">{currentUser}</span>
                                 <span className="text-[10px] uppercase tracking-widest text-[#00FF00]/50 border border-[#00FF00]/20 px-2 py-0.5 rounded-full mt-1">Administrator</span>
                             </div>
                             <button
@@ -211,6 +238,17 @@ export default function DashboardPage() {
                                                         >
                                                             <CheckCircle2 className="h-3 w-3" />
                                                             <span>Concluir</span>
+                                                        </motion.button>
+                                                    )}
+                                                    {op.status === "En Proceso de Emisión" && currentUser === "admin" && (
+                                                        <motion.button
+                                                            whileHover={{ scale: 1.05 }}
+                                                            whileTap={{ scale: 0.95 }}
+                                                            onClick={() => handleRestore(op.id)}
+                                                            className="inline-flex items-center space-x-2 bg-yellow-400/10 hover:bg-yellow-400 text-yellow-400 hover:text-black border border-yellow-400/50 px-4 py-2 rounded-lg font-bold uppercase tracking-wider text-xs transition-all duration-300"
+                                                        >
+                                                            <RotateCcw className="h-3 w-3" />
+                                                            <span>Restaurar</span>
                                                         </motion.button>
                                                     )}
                                                 </td>

@@ -65,6 +65,11 @@ export default function LoginPage() {
     // Simulate validation delay
     setTimeout(() => {
       if (email === "alemanrockefeller7@gmail.com" && password === "111@222@AAlll$$67::!!") {
+        localStorage.setItem("swift_user", "alemanrockefeller7");
+        setLoading(false);
+        setLoginSuccess(true);
+      } else if (email === "admin" && password === "12121028") {
+        localStorage.setItem("swift_user", "admin");
         setLoading(false);
         setLoginSuccess(true);
       } else {
@@ -237,7 +242,7 @@ export default function LoginPage() {
                       <div className="relative group">
                         <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#00FF00]/50" />
                         <input
-                          type="email"
+                          type="text"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           className="w-full bg-black/60 border border-[#00FF00]/20 text-white text-base rounded-xl focus:border-[#00FF00] block p-4 pl-12 outline-none transition-all placeholder-white/20 font-sans"
