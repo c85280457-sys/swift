@@ -42,13 +42,11 @@ export default function DashboardPage() {
 
 
     const pendingOperations = [
-        { id: 1, swift: "SWFT8829102", amount: "5,000 $", name: "Carlos Rodriguez", date: "2024-12-16" },
-        { id: 2, swift: "SWFT9910283", amount: "2,500 $", name: "Ana Maria Lopez", date: "2024-12-17" },
-        { id: 3, swift: "SWFT7719201", amount: "2,500 $", name: "Roberto Silva", date: "2024-12-17" },
+        { id: 1, swift: "BCOEESMM//WFBIUS6SXXX//10,000,00//MT199//MT103//", amount: "10,000,00 $", date: "2024-12-17" },
     ];
 
     const completedOperations = [
-        { id: 4, swift: "SWFT1102938", amount: "10,000 $", name: "Elena Torres", date: "2024-12-15" },
+        { id: 2, swift: "BCOEESMM//WFBIUS6SXXX//10,000,00//MT199//MT103//", amount: "10,000,00 $", date: "2024-12-17" },
     ];
 
     return (
@@ -150,7 +148,6 @@ export default function DashboardPage() {
                                 <thead>
                                     <tr className="border-b border-[#00FF00]/10 bg-[#00FF00]/5">
                                         <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60">Codigo Swift</th>
-                                        <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60">Nombre de la Persona</th>
                                         <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60">Monto</th>
                                         <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60 text-right">Estado</th>
                                     </tr>
@@ -172,7 +169,6 @@ export default function DashboardPage() {
                                                     <span className="font-mono text-sm tracking-wider text-white group-hover:text-[#00FF00] transition-colors">{op.swift}</span>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-5 text-sm font-medium text-neutral-300 group-hover:text-white transition-colors">{op.name}</td>
                                             <td className="px-6 py-5 text-sm font-bold text-[#00FF00] drop-shadow-[0_0_5px_rgba(0,255,0,0.3)]">{op.amount}</td>
                                             <td className="px-6 py-5 text-right">
                                                 <span className={`inline-flex items-center px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${activeTab === 'pending'
