@@ -89,17 +89,19 @@ const Earth = () => {
                 <meshPhongMaterial
                     map={earthMap}
                     specular={new THREE.Color("grey")}
-                    shininess={5}
+                    shininess={10}
+                    emissive={new THREE.Color("#002200")}
+                    emissiveIntensity={0.2}
                 />
             </Sphere>
 
             {/* Clouds / Glow Layer for Cyber feel */}
-            <mesh ref={cloudsRef} scale={[1.01, 1.01, 1.01]}>
+            <mesh ref={cloudsRef} scale={[1.015, 1.015, 1.015]}>
                 <sphereGeometry args={[5, 64, 64]} />
                 <meshStandardMaterial
                     map={earthMap}
                     transparent
-                    opacity={0.4}
+                    opacity={0.3}
                     blending={THREE.AdditiveBlending}
                     color="#44ff44"
                 />
@@ -111,16 +113,30 @@ const Earth = () => {
             <Arc start={[40.7, -74]} end={[51.5, -0.1]} color="#00FFFF" /> {/* NY -> London */}
             <Arc start={[51.5, -0.1]} end={[35.6, 139.6]} color="#FF00FF" /> {/* London -> Tokyo */}
             <Arc start={[-23.5, -46.6]} end={[40.4, -3.7]} color="#00FF00" /> {/* SP -> Madrid */}
+
             <Arc start={[35.6, 139.6]} end={[37.7, -122.4]} color="#FFFF00" /> {/* Tokyo -> SF */}
             <Arc start={[37.7, -122.4]} end={[40.7, -74]} color="#00FFFF" /> {/* SF -> NY */}
 
+            <Arc start={[1.3, 103.8]} end={[-33.8, 151.2]} color="#FF00FF" /> {/* Singapore -> Sydney */}
+            <Arc start={[55.7, 37.6]} end={[25.2, 55.2]} color="#00FF00" /> {/* Moscow -> Dubai */}
+            <Arc start={[-26.2, 28.0]} end={[19.0, 72.8]} color="#FFFF00" /> {/* Johannesburg -> Mumbai */}
+
             {/* Markers */}
-            <Marker lat={40.7} lon={-74} color="#00FFFF" />
-            <Marker lat={51.5} lon={-0.1} color="#FF00FF" />
-            <Marker lat={35.6} lon={139.6} color="#FFFF00" />
-            <Marker lat={-23.5} lon={-46.6} color="#00FF00" />
-            <Marker lat={37.7} lon={-122.4} color="#00FFFF" />
-            <Marker lat={25.2} lon={55.2} color="#FFD700" /> {/* Dubai */}
+            {[
+                { lat: 40.7, lon: -74, c: "#00FFFF" }, // NY
+                { lat: 51.5, lon: -0.1, c: "#FF00FF" }, // London
+                { lat: 35.6, lon: 139.6, c: "#FFFF00" }, // Tokyo
+                { lat: -23.5, lon: -46.6, c: "#00FF00" }, // SP
+                { lat: 37.7, lon: -122.4, c: "#00FFFF" }, // SF
+                { lat: 25.2, lon: 55.2, c: "#FFD700" }, // Dubai
+                { lat: 1.3, lon: 103.8, c: "#FF00FF" }, // Singapore
+                { lat: -33.8, lon: 151.2, c: "#FF00FF" }, // Sydney
+                { lat: 55.7, lon: 37.6, c: "#00FF00" }, // Moscow
+                { lat: -26.2, lon: 28.0, c: "#FFFF00" }, // Joburg
+                { lat: 19.0, lon: 72.8, c: "#FFFF00" }, // Mumbai
+            ].map((m, i) => (
+                <Marker key={i} lat={m.lat} lon={m.lon} color={m.c} />
+            ))}
 
         </group>
     );
@@ -129,10 +145,10 @@ const Earth = () => {
 export default function CyberGlobe() {
     return (
         <div className="w-full h-full">
-            <Canvas camera={{ position: [0, 0, 15], fov: 45 }}>
-                <ambientLight intensity={1.5} color="#444" />
-                <pointLight position={[20, 10, 10]} intensity={2} color="#ffffff" />
-                <pointLight position={[-20, -10, -10]} intensity={1} color="#00FF00" />
+            <Canvas camera={{ position: [0, 0, 14], fov: 50 }}>
+                <ambientLight intensity={2.5} color="#444" />
+                <pointLight position={[20, 10, 10]} intensity={3} color="#ffffff" />
+                <pointLight position={[-20, -10, -10]} intensity={2} color="#00FF00" />
 
                 <Earth />
 
@@ -140,7 +156,7 @@ export default function CyberGlobe() {
                     enableZoom={false}
                     enablePan={false}
                     autoRotate
-                    autoRotateSpeed={0.5}
+                    autoRotateSpeed={0.8}
                     minPolarAngle={Math.PI / 3}
                     maxPolarAngle={Math.PI / 1.5}
                 />

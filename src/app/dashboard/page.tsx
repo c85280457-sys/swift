@@ -100,13 +100,13 @@ export default function DashboardPage() {
 
 
                 {/* Action Bar */}
-                <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
-                    <div className="flex space-x-2 bg-black/40 p-2 rounded-2xl border border-[#00FF00]/10 backdrop-blur-sm">
+                <div className="flex flex-col xl:flex-row justify-between items-center mb-10 gap-6">
+                    <div className="flex sm:space-x-2 bg-black/40 p-1.5 sm:p-2 rounded-2xl border border-[#00FF00]/10 backdrop-blur-sm w-full xl:w-auto">
                         {['pending', 'completed'].map((tab) => (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`relative px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 uppercase tracking-wide overflow-hidden ${activeTab === tab
+                                className={`relative flex-1 xl:flex-none px-4 sm:px-8 py-3 rounded-xl text-[10px] sm:text-sm font-bold transition-all duration-300 uppercase tracking-wide overflow-hidden ${activeTab === tab
                                     ? 'text-black shadow-[0_0_20px_rgba(0,255,0,0.3)]'
                                     : 'text-[#00FF00]/60 hover:text-[#00FF00] hover:bg-[#00FF00]/5'
                                     }`}
@@ -118,7 +118,7 @@ export default function DashboardPage() {
                                         transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                                     />
                                 )}
-                                <span className="relative z-10">{tab === 'pending' ? 'Operaciones Pendientes' : 'Operaciones Concluidas'}</span>
+                                <span className="relative z-10 whitespace-nowrap">{tab === 'pending' ? 'Operaciones Pendientes' : 'Operaciones Concluidas'}</span>
                             </button>
                         ))}
                     </div>
@@ -127,7 +127,7 @@ export default function DashboardPage() {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setIsModalOpen(true)}
-                        className="group relative flex items-center space-x-3 bg-[#00FF00] text-black px-8 py-4 rounded-2xl font-black hover:bg-white hover:shadow-[0_0_30px_rgba(0,255,0,0.6)] transition-all duration-300 uppercase tracking-wider"
+                        className="group relative w-full xl:w-auto flex justify-center items-center space-x-3 bg-[#00FF00] text-black px-8 py-4 rounded-2xl font-black hover:bg-white hover:shadow-[0_0_30px_rgba(0,255,0,0.6)] transition-all duration-300 uppercase tracking-wider"
                     >
                         <Plus className="h-5 w-5" />
                         <span>Nueva Operación</span>
@@ -146,13 +146,13 @@ export default function DashboardPage() {
                         className="bg-black/40 border border-[#00FF00]/10 rounded-3xl overflow-hidden backdrop-blur-md"
                     >
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left">
+                            <table className="w-full text-left min-w-[800px]">
                                 <thead>
                                     <tr className="border-b border-[#00FF00]/10 bg-[#00FF00]/5">
-                                        <th className="px-8 py-6 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60">Codigo Swift</th>
-                                        <th className="px-8 py-6 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60">Nombre de la Persona</th>
-                                        <th className="px-8 py-6 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60">Monto</th>
-                                        <th className="px-8 py-6 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60 text-right">Estado</th>
+                                        <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60">Codigo Swift</th>
+                                        <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60">Nombre de la Persona</th>
+                                        <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60">Monto</th>
+                                        <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60 text-right">Estado</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-[#00FF00]/5">
@@ -164,7 +164,7 @@ export default function DashboardPage() {
                                             key={op.id}
                                             className="group hover:bg-[#00FF00]/5 transition-colors duration-300"
                                         >
-                                            <td className="px-8 py-6">
+                                            <td className="px-6 py-5">
                                                 <div className="flex items-center space-x-4">
                                                     <div className="h-10 w-10 rounded-xl bg-[#00FF00]/10 flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 border border-[#00FF00]/20 group-hover:border-[#00FF00]">
                                                         <Activity className="h-5 w-5 text-[#00FF00]" />
@@ -172,9 +172,9 @@ export default function DashboardPage() {
                                                     <span className="font-mono text-sm tracking-wider text-white group-hover:text-[#00FF00] transition-colors">{op.swift}</span>
                                                 </div>
                                             </td>
-                                            <td className="px-8 py-6 text-sm font-medium text-neutral-300 group-hover:text-white transition-colors">{op.name}</td>
-                                            <td className="px-8 py-6 text-sm font-bold text-[#00FF00] drop-shadow-[0_0_5px_rgba(0,255,0,0.3)]">{op.amount}</td>
-                                            <td className="px-8 py-6 text-right">
+                                            <td className="px-6 py-5 text-sm font-medium text-neutral-300 group-hover:text-white transition-colors">{op.name}</td>
+                                            <td className="px-6 py-5 text-sm font-bold text-[#00FF00] drop-shadow-[0_0_5px_rgba(0,255,0,0.3)]">{op.amount}</td>
+                                            <td className="px-6 py-5 text-right">
                                                 <span className={`inline-flex items-center px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${activeTab === 'pending'
                                                     ? 'bg-yellow-400/10 text-yellow-400 border-yellow-400/20 shadow-[0_0_10px_rgba(250,204,21,0.1)]'
                                                     : 'bg-[#00FF00]/10 text-[#00FF00] border-[#00FF00]/20 shadow-[0_0_10px_rgba(0,255,0,0.1)]'
@@ -190,7 +190,7 @@ export default function DashboardPage() {
                         </div>
 
                         {/* Pagination */}
-                        <div className="px-8 py-6 border-t border-[#00FF00]/10 bg-[#00FF00]/5 flex items-center justify-between text-xs text-[#00FF00]/40 font-mono">
+                        <div className="px-6 py-5 border-t border-[#00FF00]/10 bg-[#00FF00]/5 flex flex-col sm:flex-row gap-4 items-center justify-between text-xs text-[#00FF00]/40 font-mono">
                             <span>DISPLAYING {activeTab === 'pending' ? pendingOperations.length : completedOperations.length} RECORDS</span>
                             <div className="flex space-x-4">
                                 <button className="hover:text-[#00FF00] transition-colors">PREV</button>
