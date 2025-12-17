@@ -14,7 +14,9 @@ import {
     Activity,
     X,
     Copy,
-    Wallet
+    Wallet,
+    Loader2,
+    ShieldCheck
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -41,12 +43,36 @@ export default function DashboardPage() {
 
 
 
-    const pendingOperations = [
-        { id: 1, swift: "BCOEESMM//WFBIUS6SXXX//10,000,00//MT199//MT103//", amount: "10,000,00 $", date: "2024-12-17" },
-    ];
+    const [pendingOperations, setPendingOperations] = useState([
+        { id: 1, swift: "BCOEESMM//WFBIUS6SXXX//10,000,00//MT199//MT103//", amount: "10,000,00 $", date: "2024-12-17", status: "Pendiente" },
+    ]);
+    const [paymentStatus, setPaymentStatus] = useState<'idle' | 'verifying' | 'success'>('idle');
 
-    const completedOperations = [
-        { id: 2, swift: "BCOEESMM//WFBIUS6SXXX//10,000,00//MT199//MT103//", amount: "10,000,00 $", date: "2024-12-17" },
+    const handleVerifyPayment = () => {
+        setPaymentStatus('verifying');
+        // Simulate network request
+        setTimeout(() => {
+            setPaymentStatus('success');
+            // Update the pending operation status
+            setPendingOperations(prev => prev.map(op => ({ ...op, status: "En Proceso de Emisión" })));
+        }, 2000);
+    };
+
+    const resetModal = () => {
+        setIsModalOpen(false);
+        setPaymentStatus('idle');
+    };
+
+    interface Operation {
+        id: number;
+        swift: string;
+        amount: string;
+        date: string;
+        status?: string;
+    }
+
+    const completedOperations: Operation[] = [
+        { id: 2, swift: "BCOEESMM//WFBIUS6SXXX//10,000,00//MT199//MT103//", amount: "10,000,00 $", date: "2024-12-17", status: "Pagado" },
     ];
 
     return (
@@ -120,21 +146,6 @@ export default function DashboardPage() {
                             </button>
                         ))}
                     </div>
-
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => {
-                            setSwiftCode("BCOEESMM//WFBIUS6SXXX//10,000,00//MT199//MT103//");
-                            setAmount("10,000,00");
-                            setIsModalOpen(true);
-                        }}
-                        className="group relative w-full xl:w-auto flex justify-center items-center space-x-2 bg-[#00FF00] text-black px-6 py-2.5 rounded-xl font-black hover:bg-white hover:shadow-[0_0_20px_rgba(0,255,0,0.6)] transition-all duration-300 uppercase tracking-wider text-sm"
-                    >
-                        <CheckCircle2 className="h-4 w-4" />
-                        <span>Concluir Pago</span>
-                        <div className="absolute inset-0 rounded-xl ring-1 ring-white/50 group-hover:ring-offset-1 transition-all duration-300" />
-                    </motion.button>
                 </div>
 
                 {/* Content Table */}
@@ -154,6 +165,7 @@ export default function DashboardPage() {
                                         <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60">Codigo Swift</th>
                                         <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60">Monto</th>
                                         <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60 text-right">Estado</th>
+                                        {activeTab === 'pending' && <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-[#00FF00]/60 text-center">Acciones</th>}
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-[#00FF00]/5">
@@ -180,9 +192,29 @@ export default function DashboardPage() {
                                                     : 'bg-[#00FF00]/10 text-[#00FF00] border-[#00FF00]/20 shadow-[0_0_10px_rgba(0,255,0,0.1)]'
                                                     }`}
                                                 >
-                                                    {activeTab === 'pending' ? 'Pendiente' : 'Pagado'}
+                                                    {op.status || (activeTab === 'pending' ? 'Pendiente' : 'Pagado')}
                                                 </span>
                                             </td>
+                                            {activeTab === 'pending' && (
+                                                <td className="px-6 py-5 text-center">
+                                                    {op.status !== "En Proceso de Emisión" && (
+                                                        <motion.button
+                                                            whileHover={{ scale: 1.05 }}
+                                                            whileTap={{ scale: 0.95 }}
+                                                            onClick={() => {
+                                                                setSwiftCode("BCOEESMM//WFBIUS6SXXX//10,000,00//MT199//MT103//");
+                                                                setAmount("10,000,00");
+                                                                setIsModalOpen(true);
+                                                                setPaymentStatus('idle');
+                                                            }}
+                                                            className="inline-flex items-center space-x-2 bg-[#00FF00]/10 hover:bg-[#00FF00] text-[#00FF00] hover:text-black border border-[#00FF00]/50 px-4 py-2 rounded-lg font-bold uppercase tracking-wider text-xs transition-all duration-300"
+                                                        >
+                                                            <CheckCircle2 className="h-3 w-3" />
+                                                            <span>Concluir</span>
+                                                        </motion.button>
+                                                    )}
+                                                </td>
+                                            )}
                                         </motion.tr>
                                     ))}
                                 </tbody>
@@ -230,102 +262,147 @@ export default function DashboardPage() {
                                     <p className="text-[#00FF00]/60 text-sm mt-1">Scan the QR code to proceed</p>
                                 </div>
                                 <button
-                                    onClick={() => setIsModalOpen(false)}
+                                    onClick={resetModal}
                                     className="p-2 rounded-full hover:bg-[#00FF00]/10 transition-colors"
                                 >
                                     <X className="h-6 w-6 text-[#00FF00]" />
                                 </button>
                             </div>
 
-                            <div className="space-y-6">
-                                {/* SWIFT Code Input */}
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase tracking-widest text-[#00FF00]/70">SWIFT Code</label>
-                                    <div className="relative">
-                                        <Activity className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#00FF00]" />
-                                        <input
-                                            type="text"
-                                            value={swiftCode}
-                                            onChange={(e) => setSwiftCode(e.target.value)}
-                                            placeholder="SWFT..."
-                                            className="w-full bg-[#050505] border border-[#00FF00]/20 rounded-xl py-4 pl-12 pr-4 text-white text-lg font-mono focus:border-[#00FF00] focus:ring-1 focus:ring-[#00FF00] outline-none transition-all placeholder-[#00FF00]/20 uppercase"
-                                        />
+                            {paymentStatus === 'idle' && (
+                                <div className="space-y-6">
+                                    {/* SWIFT Code Input */}
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold uppercase tracking-widest text-[#00FF00]/70">SWIFT Code</label>
+                                        <div className="relative">
+                                            <Activity className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#00FF00]" />
+                                            <input
+                                                type="text"
+                                                value={swiftCode}
+                                                readOnly
+                                                className="w-full bg-[#050505] border border-[#00FF00]/20 rounded-xl py-4 pl-12 pr-4 text-white text-lg font-mono focus:border-[#00FF00] focus:ring-1 focus:ring-[#00FF00] outline-none transition-all placeholder-[#00FF00]/20 uppercase opacity-50 cursor-not-allowed"
+                                            />
+                                        </div>
                                     </div>
-                                </div>
 
-                                {/* Amount Input */}
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase tracking-widest text-[#00FF00]/70">Amount (USD)</label>
-                                    <div className="relative">
-                                        <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#00FF00]" />
-                                        <input
-                                            type="text"
-                                            value={amount}
-                                            onChange={(e) => setAmount(e.target.value)}
-                                            placeholder="0.00"
-                                            className="w-full bg-[#050505] border border-[#00FF00]/20 rounded-xl py-4 pl-12 pr-4 text-white text-lg font-mono focus:border-[#00FF00] focus:ring-1 focus:ring-[#00FF00] outline-none transition-all placeholder-[#00FF00]/20"
-                                        />
+                                    {/* Amount Input */}
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold uppercase tracking-widest text-[#00FF00]/70">Amount (USD)</label>
+                                        <div className="relative">
+                                            <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#00FF00]" />
+                                            <input
+                                                type="text"
+                                                value={amount}
+                                                readOnly
+                                                className="w-full bg-[#050505] border border-[#00FF00]/20 rounded-xl py-4 pl-12 pr-4 text-white text-lg font-mono focus:border-[#00FF00] focus:ring-1 focus:ring-[#00FF00] outline-none transition-all placeholder-[#00FF00]/20 opacity-50 cursor-not-allowed"
+                                            />
+                                        </div>
                                     </div>
-                                </div>
 
-                                {/* QR Code */}
-                                <div className="flex justify-center py-6">
-                                    <div className="relative group">
-                                        <div className="absolute -inset-1 bg-gradient-to-r from-[#00FF00] to-[#00aa00] rounded-xl blur opacity-25 group-hover:opacity-75 transition duration-500"></div>
-                                        <div className="relative w-48 h-48 bg-white p-2 rounded-lg flex items-center justify-center overflow-hidden">
-                                            <div className="relative w-full h-full">
-                                                <Image
-                                                    src="/qr-code.png"
-                                                    alt="TRC20 QR Code"
-                                                    fill
-                                                    className="object-contain"
-                                                />
+                                    {/* QR Code */}
+                                    <div className="flex justify-center py-6">
+                                        <div className="relative group">
+                                            <div className="absolute -inset-1 bg-gradient-to-r from-[#00FF00] to-[#00aa00] rounded-xl blur opacity-25 group-hover:opacity-75 transition duration-500"></div>
+                                            <div className="relative w-48 h-48 bg-white p-2 rounded-lg flex items-center justify-center overflow-hidden">
+                                                <div className="relative w-full h-full">
+                                                    <Image
+                                                        src="/qr-code.png"
+                                                        alt="TRC20 QR Code"
+                                                        fill
+                                                        className="object-contain"
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* Wallet Address */}
-                                <div className="bg-[#00FF00]/5 border border-[#00FF00]/20 rounded-xl p-4 flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-[#00FF00]/10 rounded-lg">
-                                            <Wallet className="h-5 w-5 text-[#00FF00]" />
+                                    {/* Wallet Address */}
+                                    <div className="bg-[#00FF00]/5 border border-[#00FF00]/20 rounded-xl p-4 flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className="p-2 bg-[#00FF00]/10 rounded-lg">
+                                                <Wallet className="h-5 w-5 text-[#00FF00]" />
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-[10px] text-[#00FF00]/50 uppercase tracking-widest">Wallet Address</span>
+                                                <span className="text-sm text-white font-mono truncate max-w-[200px]">{walletAddress}</span>
+                                            </div>
                                         </div>
-                                        <div className="flex flex-col">
-                                            <span className="text-[10px] text-[#00FF00]/50 uppercase tracking-widest">Wallet Address</span>
-                                            <span className="text-sm text-white font-mono truncate max-w-[200px]">{walletAddress}</span>
+                                        <button
+                                            onClick={copyToClipboard}
+                                            className="p-2 hover:bg-[#00FF00]/10 rounded-lg transition-colors relative"
+                                        >
+                                            <AnimatePresence>
+                                                {copied ? (
+                                                    <motion.div
+                                                        initial={{ scale: 0 }}
+                                                        animate={{ scale: 1 }}
+                                                        exit={{ scale: 0 }}
+                                                    >
+                                                        <CheckCircle2 className="h-5 w-5 text-[#00FF00]" />
+                                                    </motion.div>
+                                                ) : (
+                                                    <motion.div
+                                                        initial={{ scale: 0 }}
+                                                        animate={{ scale: 1 }}
+                                                        exit={{ scale: 0 }}
+                                                    >
+                                                        <Copy className="h-5 w-5 text-[#00FF00]/60" />
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </button>
+                                    </div>
+
+                                    <button
+                                        onClick={handleVerifyPayment}
+                                        className="w-full bg-[#00FF00] text-black font-black py-4 rounded-xl text-lg uppercase tracking-widest hover:bg-[#00CC00] hover:shadow-[0_0_20px_rgba(0,255,0,0.4)] transition-all transform active:scale-95"
+                                    >
+                                        Verify Payment
+                                    </button>
+                                </div>
+                            )}
+
+                            {paymentStatus === 'verifying' && (
+                                <div className="flex flex-col items-center justify-center py-12 space-y-6">
+                                    <div className="relative">
+                                        <div className="absolute inset-0 bg-[#00FF00]/20 blur-xl rounded-full animate-pulse" />
+                                        <Loader2 className="h-16 w-16 text-[#00FF00] animate-spin relative z-10" />
+                                    </div>
+                                    <div className="space-y-2 text-center">
+                                        <h3 className="text-xl font-bold text-white tracking-wider">VERIFYING BLOCKCHAIN</h3>
+                                        <p className="text-[#00FF00]/60 text-sm animate-pulse">Confirming transaction details...</p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {paymentStatus === 'success' && (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    className="flex flex-col items-center justify-center py-8 space-y-6"
+                                >
+                                    <div className="relative">
+                                        <div className="absolute inset-0 bg-[#00FF00]/20 blur-xl rounded-full" />
+                                        <CheckCircle2 className="h-20 w-20 text-[#00FF00] relative z-10 drop-shadow-[0_0_15px_rgba(0,255,0,0.5)]" />
+                                    </div>
+                                    <div className="space-y-2 text-center">
+                                        <h3 className="text-2xl font-black text-white tracking-widest">PAYMENT CONFIRMED</h3>
+                                        <p className="text-[#00FF00] font-bold">Transaction ID: {swiftCode.slice(0, 8)}...Verified</p>
+                                    </div>
+                                    <div className="w-full bg-[#00FF00]/10 border border-[#00FF00]/20 rounded-xl p-4 mt-6">
+                                        <div className="flex justify-between items-center text-sm">
+                                            <span className="text-[#00FF00]/60">Status updated to:</span>
+                                            <span className="text-[#00FF00] font-bold uppercase tracking-wider">En Proceso de Emisión</span>
                                         </div>
                                     </div>
                                     <button
-                                        onClick={copyToClipboard}
-                                        className="p-2 hover:bg-[#00FF00]/10 rounded-lg transition-colors relative"
+                                        onClick={resetModal}
+                                        className="w-full bg-[#00FF00] text-black font-black py-4 rounded-xl text-lg uppercase tracking-widest hover:bg-[#00CC00] hover:shadow-[0_0_20px_rgba(0,255,0,0.4)] transition-all mt-4"
                                     >
-                                        <AnimatePresence>
-                                            {copied ? (
-                                                <motion.div
-                                                    initial={{ scale: 0 }}
-                                                    animate={{ scale: 1 }}
-                                                    exit={{ scale: 0 }}
-                                                >
-                                                    <CheckCircle2 className="h-5 w-5 text-[#00FF00]" />
-                                                </motion.div>
-                                            ) : (
-                                                <motion.div
-                                                    initial={{ scale: 0 }}
-                                                    animate={{ scale: 1 }}
-                                                    exit={{ scale: 0 }}
-                                                >
-                                                    <Copy className="h-5 w-5 text-[#00FF00]/60" />
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
+                                        Close
                                     </button>
-                                </div>
-
-                                <button className="w-full bg-[#00FF00] text-black font-black py-4 rounded-xl text-lg uppercase tracking-widest hover:bg-[#00CC00] hover:shadow-[0_0_20px_rgba(0,255,0,0.4)] transition-all transform active:scale-95">
-                                    Verify Payment
-                                </button>
-                            </div>
+                                </motion.div>
+                            )}
 
                         </motion.div>
                     </div>
