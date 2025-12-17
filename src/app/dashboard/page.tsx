@@ -101,13 +101,13 @@ export default function DashboardPage() {
 
                 {/* Action Bar */}
                 <div className="flex flex-col xl:flex-row justify-between items-center mb-10 gap-6">
-                    <div className="flex sm:space-x-2 bg-black/40 p-1.5 sm:p-2 rounded-2xl border border-[#00FF00]/10 backdrop-blur-sm w-full xl:w-auto">
+                    <div className="flex sm:space-x-1 bg-black/40 p-1 rounded-xl border border-[#00FF00]/10 backdrop-blur-sm w-full xl:w-auto">
                         {['pending', 'completed'].map((tab) => (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`relative flex-1 xl:flex-none px-4 sm:px-8 py-3 rounded-xl text-[10px] sm:text-sm font-bold transition-all duration-300 uppercase tracking-wide overflow-hidden ${activeTab === tab
-                                    ? 'text-black shadow-[0_0_20px_rgba(0,255,0,0.3)]'
+                                className={`relative flex-1 xl:flex-none px-4 py-2 rounded-lg text-[10px] sm:text-xs font-bold transition-all duration-300 uppercase tracking-wide overflow-hidden ${activeTab === tab
+                                    ? 'text-black shadow-[0_0_15px_rgba(0,255,0,0.4)]'
                                     : 'text-[#00FF00]/60 hover:text-[#00FF00] hover:bg-[#00FF00]/5'
                                     }`}
                             >
@@ -127,11 +127,11 @@ export default function DashboardPage() {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setIsModalOpen(true)}
-                        className="group relative w-full xl:w-auto flex justify-center items-center space-x-3 bg-[#00FF00] text-black px-8 py-4 rounded-2xl font-black hover:bg-white hover:shadow-[0_0_30px_rgba(0,255,0,0.6)] transition-all duration-300 uppercase tracking-wider"
+                        className="group relative w-full xl:w-auto flex justify-center items-center space-x-2 bg-[#00FF00] text-black px-6 py-2.5 rounded-xl font-black hover:bg-white hover:shadow-[0_0_20px_rgba(0,255,0,0.6)] transition-all duration-300 uppercase tracking-wider text-sm"
                     >
-                        <Plus className="h-5 w-5" />
+                        <Plus className="h-4 w-4" />
                         <span>Nueva Operación</span>
-                        <div className="absolute inset-0 rounded-2xl ring-2 ring-white/50 group-hover:ring-offset-2 transition-all duration-300" />
+                        <div className="absolute inset-0 rounded-xl ring-1 ring-white/50 group-hover:ring-offset-1 transition-all duration-300" />
                     </motion.button>
                 </div>
 

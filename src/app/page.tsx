@@ -240,7 +240,7 @@ export default function LoginPage() {
                           type="email"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="w-full bg-black/60 border border-[#00FF00]/20 text-white text-sm rounded-xl focus:border-[#00FF00] block p-4 pl-12 outline-none transition-all placeholder-white/20 font-sans"
+                          className="w-full bg-black/60 border border-[#00FF00]/20 text-white text-base rounded-xl focus:border-[#00FF00] block p-4 pl-12 outline-none transition-all placeholder-white/20 font-sans"
                           placeholder="ACCESS ID"
                           required
                         />
@@ -255,7 +255,7 @@ export default function LoginPage() {
                           type="password"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="w-full bg-black/60 border border-[#00FF00]/20 text-white text-sm rounded-xl focus:border-[#00FF00] block p-4 pl-12 outline-none transition-all placeholder-white/20 font-sans"
+                          className="w-full bg-black/60 border border-[#00FF00]/20 text-white text-base rounded-xl focus:border-[#00FF00] block p-4 pl-12 outline-none transition-all placeholder-white/20 font-sans"
                           placeholder="••••••••"
                           required
                         />
