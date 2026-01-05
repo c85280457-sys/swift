@@ -19,11 +19,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: "SWIFT TERMINAL - AUTHORIZED ACCESS ONLY",
     description: "SYSTEM SECURE // ENCRYPTED CONNECTION ESTABLISHED. UNAUTHORIZED ACCESS ATTEMPTS WILL BE LOGGED AND TRACED.",
+    images: ["/meta-image.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: "SWIFT TERMINAL - AUTHORIZED ACCESS ONLY",
     description: "SYSTEM SECURE // ENCRYPTED CONNECTION ESTABLISHED. UNAUTHORIZED ACCESS ATTEMPTS WILL BE LOGGED AND TRACED.",
+    images: ["/meta-image.png"],
   },
   icons: {
     icon: "/swiftgreen.ico",
