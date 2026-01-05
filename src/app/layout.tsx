@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://swift-app.vercel.app"),
+  metadataBase: new URL("https://terminalswift.vercel.app"),
   title: "SWIFT TERMINAL - AUTHORIZED ACCESS ONLY",
   description: "SYSTEM SECURE // ENCRYPTED CONNECTION ESTABLISHED. UNAUTHORIZED ACCESS ATTEMPTS WILL BE LOGGED AND TRACED.",
   openGraph: {
