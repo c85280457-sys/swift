@@ -284,8 +284,8 @@ export default function DashboardPage() {
                                                             whileHover={{ scale: 1.05 }}
                                                             whileTap={{ scale: 0.95 }}
                                                             onClick={() => {
-                                                                setSwiftCode("BCOEESMM//WFBIUS6SXXX//10,000,00//MT199//MT103//");
-                                                                setAmount("10,000,00");
+                                                                setSwiftCode(op.swift);
+                                                                setAmount(op.amount.replace(" $", ""));
                                                                 setSelectedOperationId(op.id);
                                                                 setIsModalOpen(true);
                                                                 setPaymentStatus('idle');
